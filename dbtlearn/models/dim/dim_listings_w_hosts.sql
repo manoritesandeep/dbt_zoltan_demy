@@ -1,22 +1,25 @@
-{{
-  config(
-    materialized = 'table'
-    )
-}} 
-WITH src_hosts AS (
+WITH
+l AS (
     SELECT
         *
     FROM
-        {{ ref('src_hosts') }}
+        {{ ref('dim_listings_cleansed') }}
+),
+h AS (
+    SELECT * 
+    FROM {{ ref('dim_hosts_cleansed') }}
 )
-SELECT
-    host_id,
-    NVL(
-        host_name,
-        'Anonymous'
-    ) AS host_name,
-    is_superhost,
-    created_at,
-    updated_at
-FROM
-    src_hosts
+
+SELECT 
+    l.listing_id,
+    l.listing_name,
+    l.room_type,
+    l.minimum_nights,
+    l.price,
+    l.host_id,
+    h.host_name,
+    h.is_superhost as host_is_superhost,
+    l.created_at,
+    GREATEST(l.updated_at, h.updated_at) as updated_at
+FROM l
+LEFT JOIN h ON (h.host_id = l.host_id)
