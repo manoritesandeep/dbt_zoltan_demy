@@ -1,0 +1,20 @@
+## Setup 
+
+create pyenv venv
+pyenv virtualenv 3.10.13 my-new-project-env
+
+activate pyenv venv
+pyenv activate venv_dbt_zoltan 
+
+activate venv and install dbt (core) + snowflake
+pip install dbt-snowflake==1.10.2
+
+Verify:
+dbt --version 
+    Output ->
+    Core:
+    - installed: 1.10.13
+    - latest:    1.10.13 - Up to date!
+
+    Plugins:
+    - snowflake: 1.10.2 - Up to date!
