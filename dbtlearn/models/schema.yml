@@ -22,8 +22,7 @@ models:
         description: Type of the apartment / room
         tests:
           - accepted_values:
-              values:
-                ["Entire home/apt", "Private room", "Shared room", "Hotel room"]
+              values: [ "Entire home/apt", "Private room", "Shared room", "Hotel room" ]
 
       - name: minimum_nights
         description: '{{ doc("dim_listing_cleansed__minimum_nights") }}'
@@ -48,7 +47,7 @@ models:
         description: Defines whether the hosts is a superhost.
         tests:
           - accepted_values:
-              values: ["t", "f"]
+              values: [ "t", "f" ]
   - name: dim_listings_w_hosts
     tests:
       - dbt_expectations.expect_table_row_count_to_equal_other_table:
@@ -59,7 +58,7 @@ models:
           - dbt_expectations.expect_column_values_to_be_of_type:
               column_type: number
           - dbt_expectations.expect_column_quantile_values_to_be_between:
-              quantile: .99
+              quantile: 0.99
               min_value: 50
               max_value: 500
           - dbt_expectations.expect_column_max_to_be_between:
@@ -73,12 +72,31 @@ models:
           - relationships:
               to: ref('dim_listings_cleansed')
               field: listing_id
+        description: A unique identifier for the Airbnb listing associated with the review.
+        data_type: number
 
       - name: reviewer_name
         tests:
           - not_null
+        description: The name of the individual who provided the review for the listing.
+        data_type: varchar
 
       - name: review_sentiment
         tests:
           - accepted_values:
-              values: ["positive", "neutral", "negative"]
+              values:
+                - negative
+                - neutral
+                - positive
+        description: Indicates the sentiment of the review text, typically categorized as positive, negative, or neutral.
+        data_type: varchar
+      - name: review_id
+        description: A unique identifier for each review, generated using a hash function (MD5) applied to a combination of listing_id, review_date, reviewer_name, and review_text. This ensures that each review is uniquely identifiable.
+        data_type: varchar
+      - name: review_date
+        description: The date when the review was submitted by the reviewer.
+        data_type: timestamp_ntz
+      - name: review_text
+        description: The text content of the review provided by the reviewer, describing their experience or feedback about the listing.
+        data_type: varchar
+    description: The fct_reviews model processes raw review data from the Airbnb dataset to generate a structured table containing review information. It includes a unique review_id for each review, along with details such as listing_id, reviewer_name, and review_sentiment. The model filters out reviews with null text to ensure data quality.
