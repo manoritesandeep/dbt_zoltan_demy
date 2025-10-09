@@ -100,3 +100,27 @@ models:
         description: The text content of the review provided by the reviewer, describing their experience or feedback about the listing.
         data_type: varchar
     description: The fct_reviews model processes raw review data from the Airbnb dataset to generate a structured table containing review information. It includes a unique review_id for each review, along with details such as listing_id, reviewer_name, and review_sentiment. The model filters out reviews with null text to ensure data quality.
+  - name: mart_fullmoon_reviews
+    description: The mart_fullmoon_reviews model combines Airbnb review data with full moon dates to determine whether each review occurred during a full moon or not. It enriches the review data by adding a new column, 'is_full_moon', which indicates if the review date aligns with a full moon date.
+    columns:
+      - name: review_id
+        description: A unique identifier for each review in the dataset.
+        data_type: varchar
+      - name: listing_id
+        description: The unique identifier for the Airbnb listing associated with the review.
+        data_type: number
+      - name: review_date
+        description: The date when the review was submitted, stored as a timestamp.
+        data_type: timestamp_ntz
+      - name: reviewer_name
+        description: The name of the individual who provided the review for the listing.
+        data_type: varchar
+      - name: review_text
+        description: The textual content of the review provided by the reviewer, describing their experience or feedback.
+        data_type: varchar
+      - name: review_sentiment
+        description: The sentiment analysis result of the review text, indicating whether the review is positive, negative, or neutral.
+        data_type: varchar
+      - name: is_full_moon
+        description: Indicates whether the review date falls on or one day after a full moon. Possible values are 'full moon' and 'not full moon'.
+        data_type: varchar
